@@ -1,5 +1,6 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from http.client import HTTPMessage
+from bitstring import BitArray
 
 class myHandler(BaseHTTPRequestHandler):
 
@@ -20,6 +21,15 @@ class myHandler(BaseHTTPRequestHandler):
             myHandler.message += '1'
         print(myHandler.message)
 
+        if len(myHandler.message) >= 8:
+            char_array = myHandler.message[:8]
+            with open("out.txt", "ab") as f:
+                bits = BitArray(bin=char_array)
+                f.write(bits.bytes)
+                myHandler.message = myHandler.message[8:]
+                print(bits.bin)
+                
+            
     def do_POST(self):
         self.send_response(200)
 
