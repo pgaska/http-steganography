@@ -11,11 +11,15 @@ class myHandler(BaseHTTPRequestHandler):
         self.send_header('Content-type','text/plain')
         self.end_headers()
         headers = str.split(str(self.headers))
-        if headers.index("Accept:") < headers.index("Connection:"):
+        if headers.index("User-Agent:") < headers.index("Accept:"):
             myHandler.message += '0'
         else:
             myHandler.message += '1'
         if headers.index("Accept-Language:") < headers.index("Accept-Charset:"):
+            myHandler.message += '0'
+        else:
+            myHandler.message += '1'
+        if headers.index("Keep-Alive:") < headers.index("Connection:"):
             myHandler.message += '0'
         else:
             myHandler.message += '1'
