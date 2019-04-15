@@ -4,10 +4,11 @@ import random
 
 ADDRESS = '127.0.0.1'
 PORT = 8000
+ITERATIONS = 86640 #dokładnie 20%
 
 antygona = ''
 with open("Sofokles - Antygona.txt", "rb") as f:
-    byte = f.read(1)
+    byte = True
     while byte != b"":
         byte = f.read(1)
         bits = BitArray(byte)
@@ -17,7 +18,7 @@ print(antygona)
 
 i = 0
 
-while i<9:
+while i<ITERATIONS:
     conn = http.client.HTTPConnection(ADDRESS, PORT)
     conn.putrequest("GET","/index.html")
     if antygona[i]=='0':
