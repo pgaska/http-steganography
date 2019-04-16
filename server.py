@@ -1,42 +1,70 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from http.client import HTTPMessage
 from bitstring import BitArray
+from os import sep, curdir
 
 class myHandler(BaseHTTPRequestHandler):
 
     message =  ''
 
     def do_GET(self):
-        self.send_response(200)
-        self.send_header('Content-type','text/plain')
-        self.end_headers()
-        headers = str.split(str(self.headers))
-        if headers.index("User-Agent:") < headers.index("Accept:"):
-            myHandler.message += '0'
-        else:
-            myHandler.message += '1'
-        if headers.index("Accept-Language:") < headers.index("Accept-Charset:"):
-            myHandler.message += '0'
-        else:
-            myHandler.message += '1'
-        if headers.index("Keep-Alive:") < headers.index("Connection:"):
-            myHandler.message += '0'
-        else:
-            myHandler.message += '1'
-        print(myHandler.message)
+        try:
+            sendReply = False
+            if self.path.endswith(".html"):
+                mimetype = 'text/html'
+                sendReply = True
+            if self.path.endswith(".jpg"):
+                mimetype = 'image/jpg'
+                sendReply = True
+            if self.path.endswith(".gif"):
+                mimetype = 'image/gif'
+                sendReply = True
+            if self.path.endswith(".js"):
+                mimetype = 'application/javascript'
+                sendReply = True
+            if self.path.endswith(".css"):
+                mimetype = 'text/css'
+                sendReply = True
+            if sendReply == True:
+                f = open(curdir + sep + self.path, "rb")
+                self.send_response(200)
+                self.send_header('Accept-Ranges', 'bytes')
+                self.send_header('Content-type', mimetype)
+                self.send_header('Keep-Alive', 'timeout=5, max=1000')
+                self.end_headers()
+                self.wfile.write(f.read())
+                f.close()
 
-        if len(myHandler.message) >= 8:
-            char_array = myHandler.message[:8]
-            with open("out.txt", "ab") as f:
-                bits = BitArray(bin=char_array)
-                f.write(bits.bytes)
-                myHandler.message = myHandler.message[8:]
-                print(bits.bin)
+                headers = str.split(str(self.headers))
+                if headers.index("User-Agent:") < headers.index("Accept:"):
+                    myHandler.message += '0'
+                else:
+                    myHandler.message += '1'
+                if headers.index("Accept-Language:") < headers.index("Accept-Charset:"):
+                    myHandler.message += '0'
+                else:
+                    myHandler.message += '1'
+                if headers.index("Keep-Alive:") < headers.index("Connection:"):
+                    myHandler.message += '0'
+                else:
+                    myHandler.message += '1'
+                print(myHandler.message)
+
+                if len(myHandler.message) >= 8:
+                    char_array = myHandler.message[:8]
+                    with open("out.txt", "ab") as f:
+                        bits = BitArray(bin=char_array)
+                        f.write(bits.bytes)
+                        myHandler.message = myHandler.message[8:]
+                        print(bits.bin)
+
+        except IOError:
+            self.send_error(404, 'File Not Found: %s' % self.path)
                 
             
     def do_POST(self):
         self.send_response(200)
 
-with HTTPServer(("127.0.0.1", 8000), myHandler) as httpd:
+with HTTPServer(("192.168.1.198", 8000), myHandler) as httpd:
     print("serving at port 8000")
     httpd.serve_forever()
