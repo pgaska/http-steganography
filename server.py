@@ -1,7 +1,7 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from http.client import HTTPMessage
 from bitstring import BitArray
-from os import sep, curdir
+from os import sep, curdir, path
 
 class myHandler(BaseHTTPRequestHandler):
 
@@ -30,7 +30,7 @@ class myHandler(BaseHTTPRequestHandler):
                 self.send_response(200)
                 self.send_header('Accept-Ranges', 'bytes')
                 self.send_header('Content-type', mimetype)
-                self.send_header('Keep-Alive', 'timeout=5, max=1000')
+                self.send_header('Content-Length', path.getsize(curdir + sep + self.path))
                 self.end_headers()
                 self.wfile.write(f.read())
                 f.close()
@@ -65,6 +65,6 @@ class myHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         self.send_response(200)
 
-with HTTPServer(("192.168.1.198", 8000), myHandler) as httpd:
+with HTTPServer(("192.168.43.252", 8000), myHandler) as httpd:
     print("serving at port 8000")
     httpd.serve_forever()
