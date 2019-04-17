@@ -65,6 +65,6 @@ class myHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         self.send_response(200)
 
-with HTTPServer(("192.168.43.252", 8000), myHandler) as httpd:
+with HTTPServer(("192.168.1.198", 8000), myHandler) as httpd:
     print("serving at port 8000")
     httpd.serve_forever()
