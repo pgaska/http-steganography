@@ -1,8 +1,7 @@
 import http.client
-from bitstring import BitArray
 import random
 
-ADDRESS = '192.168.1.198'
+ADDRESS = '127.0.0.1'
 PORT = 8000
 ITERATIONS = 86640 #dokładnie 20%
 FILES = ['index.html', 'about.html', 'contact.html', 'industries.html', 'services.html',
@@ -13,16 +12,6 @@ FILES = ['index.html', 'about.html', 'contact.html', 'industries.html', 'service
          'main.js', 'aos.js', 'bootstrap.min.js', 'bootstrap-datepicker.min.js', 'mediaelement-and-player.min.js',
          'owl.carousel.min.js', 'slick.min.js']
 
-antygona = ''
-with open("Sofokles - Antygona.txt", "rb") as f:
-    byte = True
-    while byte != b"":
-        byte = f.read(1)
-        bits = BitArray(byte)
-        antygona += bits.bin
-
-print(antygona)
-
 i = 0
 
 while i<ITERATIONS:
@@ -30,7 +19,6 @@ while i<ITERATIONS:
 
     conn = http.client.HTTPConnection(ADDRESS, PORT)
     conn.putrequest("GET","/"+request_file)
-    # if antygona[i]=='0':
     conn.putheader('User-Agent', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36')
     if request_file.endswith(".html"):
         conn.putheader('Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8')
@@ -38,28 +26,14 @@ while i<ITERATIONS:
         conn.putheader('Accept', 'image/*')
     else:
         conn.putheader('Accept', '*/*')
-    # else:
-    #     if request_file.endswith(".html"):
-    #         conn.putheader('Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8')
-    #     elif request_file.endswith(".jpg"):
-    #         conn.putheader('Accept', 'image/*')
-    #     else:
-    #         conn.putheader('Accept', '*/*')
-    #     conn.putheader('User-Agent', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36')
-    # if antygona[i+1]=='0':
+
     conn.putheader('Accept-Language', 'en-us,en;q=0.5')
     conn.putheader('Accept-Charset', 'ISO-8859-1,utf-8;q=0.7,*;q=0.7')
-    # else:
-    #     conn.putheader('Accept-Charset', 'ISO-8859-1,utf-8;q=0.7,*;q=0.7')
-    #     conn.putheader('Accept-Language', 'en-us,en;q=0.5')
-    # if antygona[i+2]=='0':
+
     conn.putheader('Keep-Alive', '115')
     conn.putheader('Connection', 'Keep-Alive')
-    # else:
-    #     conn.putheader('Connection', 'Keep-Alive')
-    #     conn.putheader('Keep-Alive', '115')
+
     conn.putheader('Referer', 'https://developer.mozilla.org/en-US/docs/Web/JavaScript')
     conn.endheaders()
-    i+=3
     res = conn.getresponse()
     print (res.status, res.reason)
